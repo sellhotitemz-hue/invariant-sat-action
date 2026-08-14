@@ -2,17 +2,19 @@
 
 [![GitHub Actions Marketplace](https://img.shields.io/badge/Marketplace-Invariant%20SAT%20ZK%20Scanner-blue?logo=github)](https://github.com/marketplace)
 [![Zero-IP Enclave Protected](https://img.shields.io/badge/Security-Zero--IP%20Enclave-green)](https://invariantsat.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Proprietary Commercial](https://img.shields.io/badge/License-Proprietary%20Commercial-red.svg)](#-license--terms)
 
 Automated **Zero-Knowledge Circuit Soundness & Exploit Witness Scanner** for GitHub CI/CD pipelines.
 
-Scans Circom R1CS circuits for **under-constrained signals** and **proof forgery vulnerabilities** before deploying code to production.
+Scans ZK circuits (Circom R1CS, SP1 zkVM AIR traces, Halo2 Plonkish matrices, Aztec Noir smart contracts) for **under-constrained signals** and **proof forgery vulnerabilities** before deploying code to production.
 
 ---
 
-## 🚀 Quickstart Usage
+## 📖 COMPLETE USER & DEPLOYMENT GUIDE
 
-Add this step to your `.github/workflows/zk_security.yml` file:
+### 🚀 Quickstart Workflow Integration
+
+Add this step to your project's `.github/workflows/zk_security.yml` file:
 
 ```yaml
 name: ZK Circuit Security Audit
@@ -27,28 +29,64 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Invariant SAT ZK Circuit Audit
+      - name: Run Invariant SAT ZK Security Scan
         uses: sellhotitemz-hue/invariant-sat-action@v1.0.0
         with:
           r1cs_path: 'build/circuits/semaphore.r1cs'
-          api_url: 'https://api.invariantsat.com'  # Or your custom API server URL
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ---
 
-## ⚡ What It Does
+## ⚡ ALL AVAILABLE FUNCTIONS & ADVANCED USAGE
 
-When a developer submits a Pull Request, Invariant SAT automatically:
+### Function 1: Circom R1CS Circuit Soundness Audit
+- **What it does**: Scans `.r1cs` circuit files for missing algebraic constraints ($x \cdot (1 - x) = 0$) and calculates system matrix rank over scalar field $\mathbb{F}_p$.
+- **YAML Configuration**:
+  ```yaml
+  - uses: sellhotitemz-hue/invariant-sat-action@v1.0.0
+    with:
+      r1cs_path: 'circuits/multiplier.r1cs'
+  ```
 
-1. **Parses R1CS Circuit Constraints**: Evaluates constraint matrix system ranks over field prime $\mathbb{F}_p$.
-2. **Detects Under-Constrained Signals**: Pinpoints signals missing upper or lower algebraic constraint bounds.
-3. **Synthesizes Counterexample Witness Vectors**: Extracts concrete witness pairs $(w_1 \neq w_2)$ demonstrating proof forgery under identical public inputs.
-4. **Posts Automated Security Reports**: Comments audit findings directly on the GitHub Pull Request.
+### Function 2: zkVM STARK AIR Trace LogUp Verifier (SP1 / RISC Zero)
+- **What it does**: Audits STARK execution trace tables and LogUp multiset memory balance constraints across cycles.
+- **YAML Configuration**:
+  ```yaml
+  - uses: sellhotitemz-hue/invariant-sat-action@v1.0.0
+    with:
+      r1cs_path: 'sp1_trace.air'
+      api_url: 'https://invariant-sat-backend.onrender.com'
+  ```
+
+### Function 3: Plonkish Subgraph Slicing (Halo2 / Plonky3)
+- **What it does**: Partitions multi-million gate constraint matrices into decoupled subgraphs for parallel linear algebra reduction.
+- **YAML Configuration**:
+  ```yaml
+  - uses: sellhotitemz-hue/invariant-sat-action@v1.0.0
+    with:
+      r1cs_path: 'circuits/halo2_gate_matrix.json'
+  ```
+
+### Function 4: Aztec Noir Smart Contract AST Diagnostic
+- **What it does**: Language Server Protocol (LSP) analysis for Aztec Noir smart contract code snippets, highlighting unconstrained private signals before compilation.
+
+### Function 5: Custom Private Enclave Server & API Key
+- **What it does**: Connects to your dedicated private enterprise server with custom SLA and auth credentials.
+- **YAML Configuration**:
+  ```yaml
+  - uses: sellhotitemz-hue/invariant-sat-action@v1.0.0
+    with:
+      r1cs_path: 'circuits/private_vault.r1cs'
+      api_url: 'https://invariant-sat-backend.onrender.com'
+      api_key: ${{ secrets.INVARIANT_SAT_API_KEY }}
+  ```
 
 ---
 
-## 📊 Example PR Comment Output
+## 📊 Automated PR Security Comment Output
+
+When a Pull Request is scanned, Invariant SAT automatically comments a detailed security verdict on the PR:
 
 | Metric | Value |
 | :--- | :--- |
@@ -70,14 +108,15 @@ When a developer submits a Pull Request, Invariant SAT automatically:
 
 ---
 
-## 🔒 Security & Privacy
+## 🔒 Security & Zero-IP Guarantee
 
 This Action uses the **Zero-IP Client Architecture**:
-- Your source code and circuit files are checked client-side.
+- Your circuit files are processed client-side.
 - Zero private keys or secret inputs are transmitted.
-- Requests are handled via encrypted HTTPS TLS.
+- Solver algorithms and C++ engines stay 100% private inside your remote Enclave API server.
 
 ---
 
-## 📄 License
-MIT License. Powered by [Invariant SAT Platform](https://invariantsat.com).
+## 📄 License & Terms
+
+**Invariant SAT Proprietary Commercial License**. All rights reserved by Invariant SAT Platform. Client wrapper provided for GitHub CI/CD integration. Powered by [Invariant SAT Enclave Engine](https://invariant-sat-backend.onrender.com).
