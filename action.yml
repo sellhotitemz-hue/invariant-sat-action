@@ -1,0 +1,33 @@
+name: 'Invariant SAT Zero-IP ZK Scanner'
+description: 'Automated ZK Circuit Soundness & Exploit Witness Scanner powered by Zero-IP Invariant SAT Enclave'
+author: 'Invariant SAT Platform'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  r1cs_path:
+    description: 'Path to target R1CS or Circom circuit file'
+    required: false
+    default: ''
+  api_url:
+    description: 'URL of secure private Invariant SAT API Server endpoint'
+    required: false
+    default: 'http://localhost:8080'
+  api_key:
+    description: 'Optional SaaS authentication key for enterprise server'
+    required: false
+    default: ''
+  github_token:
+    description: 'GitHub token for posting automated Pull Request security comments'
+    required: false
+    default: '${{ github.token }}'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    INPUT_R1CS_PATH: ${{ inputs.r1cs_path }}
+    INPUT_API_URL: ${{ inputs.api_url }}
+    INPUT_API_KEY: ${{ inputs.api_key }}
+    INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
